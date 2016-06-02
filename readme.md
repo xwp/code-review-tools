@@ -11,4 +11,4 @@ Requires [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer), with [
 
 Usage: `xwp_audit /path/to/plugin/directory/`
 
-Copy to /usr/local/bin/ for quick access.
+Copy to `/usr/local/bin/` for quick access.
