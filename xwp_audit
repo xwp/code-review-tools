@@ -1,0 +1,41 @@
+#!/bin/bash
+
+if [ -z "$@" ]; then
+    echo >&2 "usage: xwp_audit directory"
+    exit 1
+elif [ ! -d "$@" ]; then
+    echo >&2 "$@ is not a valid directory"
+    exit 1
+fi
+
+ERRORS=$(phpcs --standard=WordPress-VIP --extensions=php $1/* | grep -o 'AFFECTING [0-9]* LINE' | sed 's/AFFECTING //g' | sed 's/ LINE//g' | paste -sd+ - | bc)
+
+LINES=$(wc -l `find $1/ -type f -name "*.php" ` | grep -o '[0-9]* total' | sed 's/ total//g')
+
+PERCENT_F=$(echo "${ERRORS} / ${LINES} * 100" | bc -l | bc)
+PERCENT_I=${PERCENT_F%.*}
+
+echo "Coding standards result:"
+
+if [ $PERCENT_I -gt 50 ]; then
+	echo "✩✩✩✩✩"
+	echo "0 / 5"
+elif [ $PERCENT_I -gt 40 ]; then
+	echo "✭✩✩✩✩"
+	echo "1 / 5"
+elif [ $PERCENT_I -gt 30 ]; then
+	echo "✭✭✩✩✩"
+	echo "2 / 5"
+elif [ $PERCENT_I -gt 20 ]; then
+	echo "✭✭✭✩✩"
+	echo "3 / 5"
+elif [ $PERCENT_I -gt 10 ]; then
+	echo "✭✭✭✭✩"
+	echo "4 / 5"
+elif [ $PERCENT_I -le 10 ]; then
+	echo "✭✭✭✭✭"
+	echo "5 / 5"
+fi
+
+echo ""
+echo "$PERCENT_I% of lines contain a PHPCS error"
