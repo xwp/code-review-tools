@@ -10,6 +10,14 @@ fi
 
 ERRORS=$(phpcs --standard=WordPress-VIP --extensions=php $1/* | grep -o 'AFFECTING [0-9]* LINE' | sed 's/AFFECTING //g' | sed 's/ LINE//g' | paste -sd+ - | bc)
 
+if [ -z "$ERRORS" ]; then
+	echo "PHP CodeSniffer returned an error."
+	echo ""
+	echo "To debug, run:"
+	echo "phpcs --standard=WordPress-VIP --extensions=php $1/*"
+	exit 1
+fi
+
 LINES=$(wc -l `find $1/ -type f -name "*.php" ` | grep -o '[0-9]* total' | sed 's/ total//g')
 
 PERCENT_F=$(echo "${ERRORS} / ${LINES} * 100" | bc -l | bc)
