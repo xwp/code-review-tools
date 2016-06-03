@@ -18,9 +18,13 @@ if [ -z "$ERRORS" ]; then
 	exit 1
 fi
 
-LINES=$(wc -l `find $1/ -type f -name "*.php" ` | grep -o '[0-9]* total' | sed 's/ total//g')
+LINES=$(wc -l `find $1/ -type f -name "*.php" ` | grep -o '[0-9]* total' | sed 's/ total//g' | bc)
 
-PERCENT_F=$(echo "${ERRORS} / ${LINES} * 100" | bc -l | bc)
+if [ -z "$LINES" ]; then
+	LINES=$(wc -l `find $1/ -type f -name "*.php" ` | grep -o '[0-9]* ' | bc)
+fi
+
+PERCENT_F=$(echo "$ERRORS / $LINES * 100" | bc -l | bc)
 PERCENT_I=${PERCENT_F%.*}
 
 echo "Coding standards result:"
