@@ -25,7 +25,7 @@ if [ -z "$LINES" ]; then
 fi
 
 PERCENT_F=$(echo "$ERRORS / $LINES * 100" | bc -l | bc)
-PERCENT_I=${PERCENT_F%.*}
+PERCENT_I=$(printf "%d\n" "$PERCENT_F" 2>/dev/null) # Truncates the fraction.
 
 echo "Coding standards result:"
 
